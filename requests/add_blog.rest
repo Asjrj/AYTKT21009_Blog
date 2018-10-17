@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "The 4-hour workweek",
+  "author": "Tim Ferriss",
+  "url": "https://fourhourworkweek.com/",
+  "likes": 12
+}
