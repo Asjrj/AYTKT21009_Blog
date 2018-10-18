@@ -76,9 +76,44 @@ const favouriteBlog = (blogs) => {
     }
 }
 
+const mostBlogs = (blogs) => {
+    let writers = []
+    blogs.forEach((element) => {
+        let found = writers.find((writer) => {
+            return (writer.author === element.author)
+        })
+        if (found) {
+            found.blogs++
+        }
+        else {
+            writers.push({
+                author: element.author,
+                blogs: 1
+            })
+        }
+    });
+
+    let highestblogs = 0
+    let highestindex = 0
+    let i = 0
+    writers.forEach((element) => {
+        if (element.blogs > highestblogs) {
+            highestblogs = element.blogs
+            highestindex = i
+        }
+        i++
+    });
+
+    return {
+        author: writers[highestindex].author,
+        blogs: writers[highestindex].blogs
+    }
+}
+
 module.exports = {
     dummy,
     dummyBlogs,
     totalLikes,
-    favouriteBlog
+    favouriteBlog,
+    mostBlogs
 }
