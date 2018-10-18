@@ -57,8 +57,28 @@ const totalLikes = (blogs) => {
     return blogs.reduce((acc, cur) => acc + cur.likes, 0)
 }
 
+const favouriteBlog = (blogs) => {
+    let highestlikes = 0
+    let favouriteIndex = 0
+    let i = 0
+    blogs.forEach((element) => {
+        if (element.likes > highestlikes) {
+            highestlikes = element.likes
+            favouriteIndex = i
+        }
+        i++
+    });
+
+    return {
+        author: blogs[favouriteIndex].author,
+        likes: blogs[favouriteIndex].likes,
+        title: blogs[favouriteIndex].title
+    }
+}
+
 module.exports = {
     dummy,
     dummyBlogs,
-    totalLikes
+    totalLikes,
+    favouriteBlog
 }
