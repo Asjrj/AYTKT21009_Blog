@@ -110,10 +110,46 @@ const mostBlogs = (blogs) => {
     }
 }
 
+const mostLikes = (blogs) => {
+    let writers = []
+    blogs.forEach((element) => {
+        let found = writers.find((writer) => {
+            return (writer.author === element.author)
+        })
+        if (found) {
+            found.likes = found.likes + element.likes
+        }
+        else {
+            writers.push({
+                author: element.author,
+                likes: element.likes
+            })
+        }
+    });
+
+    let highestlikes = 0
+    let highestindex = 0
+    let i = 0
+    writers.forEach((element) => {
+        if (element.likes > highestlikes) {
+            highestlikes = element.likes
+            highestindex = i
+        }
+        i++
+    });
+
+    return {
+        author: writers[highestindex].author,
+        likes: writers[highestindex].likes
+    }
+}
+
+
 module.exports = {
     dummy,
     dummyBlogs,
     totalLikes,
     favouriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
