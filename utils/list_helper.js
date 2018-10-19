@@ -67,7 +67,7 @@ const favouriteBlog = (blogs) => {
             favouriteIndex = i
         }
         i++
-    });
+    })
 
     return {
         author: blogs[favouriteIndex].author,
@@ -91,7 +91,7 @@ const mostBlogs = (blogs) => {
                 blogs: 1
             })
         }
-    });
+    })
 
     let highestblogs = 0
     let highestindex = 0
@@ -102,7 +102,7 @@ const mostBlogs = (blogs) => {
             highestindex = i
         }
         i++
-    });
+    })
 
     return {
         author: writers[highestindex].author,
@@ -125,7 +125,7 @@ const mostLikes = (blogs) => {
                 likes: element.likes
             })
         }
-    });
+    })
 
     let highestlikes = 0
     let highestindex = 0
@@ -136,14 +136,13 @@ const mostLikes = (blogs) => {
             highestindex = i
         }
         i++
-    });
+    })
 
     return {
         author: writers[highestindex].author,
         likes: writers[highestindex].likes
     }
 }
-
 
 module.exports = {
     dummy,

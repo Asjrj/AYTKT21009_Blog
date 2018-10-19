@@ -1,7 +1,14 @@
 const mongoose = require('mongoose')
+const config = require('../utils/config')
 
-const mongoUrl = process.env.BLOG_DB_URL
-mongoose.connect(mongoUrl, { useNewUrlParser: true })
+mongoose
+    .connect(config.mongoUrl, { useNewUrlParser: true })
+    .then(() => {
+        console.log('connected to database', config.mongoUrl)
+    })
+    .catch(err => {
+        console.log(err)
+    })
 
 const Blog = mongoose.model('Blog', {
     title: String,

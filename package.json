@@ -4,18 +4,23 @@
   "description": "Blogilistaussovellus",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "watch": "nodemon index.js",
-    "test": "jest --verbose"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "watch": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose",
+    "lint": "eslint ."
   },
   "author": "Antti Penttinen",
   "license": "ISC",
   "devDependencies": {
+    "cross-env": "^5.2.0",
+    "eslint": "^5.7.0",
     "jest": "^23.6.0",
-    "nodemon": "^1.18.4"
+    "nodemon": "^1.18.4",
+    "supertest": "^3.3.0"
   },
   "dependencies": {
     "cors": "^2.8.4",
+    "dotenv": "^6.1.0",
     "express": "^4.16.4",
     "mongoose": "^5.3.4"
   },
