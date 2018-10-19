@@ -6,13 +6,22 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRouter.post('/', (request, response) => {
-  const blog = new Blog(request.body)
-  blog
-    .save()
-    .then(result => {
-      response.status(201).json(result)
-    })
+blogsRouter.post('/', async (request, response) => {
+  try {
+    const data = request.body
+
+    if (data.author === undefined || data.title === undefined || data.url === undefined) {
+      return response.status(400).send({ error: 'Author, title and url must be specified' })
+    }
+
+    const blog = new Blog(request.body)
+    const savedBlog = await blog.save()
+    response.status(201).json(savedBlog)
+
+  } catch (exception) {
+    console.log(exception)
+    response.status(500).json({ error: 'Unexpected error' })
+  }
 })
 
 module.exports = blogsRouter

@@ -67,6 +67,42 @@ describe('API Most likes', () => {
     })
 })
 
+describe('API POST', () => {
+    test('a new blog added succesfully', async () => {
+        const intialBlogs = await api
+            .get('/api/blogs')
+        const newBlog = {
+            title: "2ality – JavaScript and more",
+            author: "Dr. Axel Rauschmayer",
+            url: "http://2ality.com/",
+            likes: 2
+        }
+        const response = await api
+            .post('/api/blogs')
+            .send(newBlog)
+        const finalBlogs = await api
+            .get('/api/blogs')
+        expect(response.body.title).toEqual(newBlog.title)
+        expect(finalBlogs.body.length).toBe(intialBlogs.body.length + 1)
+    })
+
+    test('blog with insufficient data is not added ', async () => {
+        const intialBlogs = await api
+            .get('/api/blogs')
+        const badBlog = {
+            author: "Dr. Axel Rauschmayer",
+            url: "http://2ality.com/"
+        }
+        await api
+            .post('/api/blogs')
+            .send(badBlog)
+            .expect(400)
+        const finalBlogs = await api
+            .get('/api/blogs')
+        expect(finalBlogs.body.length).toBe(intialBlogs.body.length)
+    })
+})
+
 
 afterAll(() => {
     server.close()
