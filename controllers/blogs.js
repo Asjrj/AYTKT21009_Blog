@@ -2,8 +2,13 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
-  response.json(blogs)
+  try {
+    const blogs = await Blog.find({})
+    response.json(blogs)
+  } catch (exception) {
+    console.log(exception)
+    response.status(500).json({ error: 'Unexpected error' })
+  }
 })
 
 blogsRouter.post('/', async (request, response) => {
