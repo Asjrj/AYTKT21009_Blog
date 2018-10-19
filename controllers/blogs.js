@@ -14,7 +14,11 @@ blogsRouter.post('/', async (request, response) => {
       return response.status(400).send({ error: 'Author, title and url must be specified' })
     }
 
-    const blog = new Blog(request.body)
+    if (data.likes === undefined) {
+      data.likes = 0
+    }
+
+    const blog = new Blog(data)
     const savedBlog = await blog.save()
     response.status(201).json(savedBlog)
 

@@ -86,7 +86,7 @@ describe('API POST', () => {
         expect(finalBlogs.body.length).toBe(intialBlogs.body.length + 1)
     })
 
-    test('blog with insufficient data is not added ', async () => {
+    test('blog with insufficient data is not added', async () => {
         const intialBlogs = await api
             .get('/api/blogs')
         const badBlog = {
@@ -100,6 +100,24 @@ describe('API POST', () => {
         const finalBlogs = await api
             .get('/api/blogs')
         expect(finalBlogs.body.length).toBe(intialBlogs.body.length)
+    })
+
+    test('blog with no likes is initialized with likes = zero', async () => {
+        const intialBlogs = await api
+            .get('/api/blogs')
+        const zeroLikesBlog = {
+            title: "David Walsh Blog",
+            author: "David Walsh",
+            url: "https://davidwalsh.name/"
+        }
+        const response = await api
+            .post('/api/blogs')
+            .send(zeroLikesBlog)
+            .expect(201)
+        const finalBlogs = await api
+            .get('/api/blogs')
+        expect(finalBlogs.body.length).toBe(intialBlogs.body.length + 1)
+        expect(response.body.likes).toBe(0)
     })
 })
 
