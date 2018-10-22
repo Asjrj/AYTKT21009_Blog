@@ -112,15 +112,31 @@ describe('API POST', () => {
   })
 })
 
-test('a blog deleted succesfully', async () => {
-  const result = await api.get('/api/blogs')
-  const id = result.body[0]._id
-  await api.
-    delete('/api/blogs/' + id)
-    .expect(204)
-  const blogsAfter = await testHelper.blogsInDb()
-  expect(blogsAfter.length).toBe(result.body.length - 1)
+
+describe('API DELETE AND PUT', () => {
+  test('a blog deleted succesfully', async () => {
+    const result = await api.get('/api/blogs')
+    const id = result.body[0]._id
+    await api.
+      delete('/api/blogs/' + id)
+      .expect(204)
+    const blogsAfter = await testHelper.blogsInDb()
+    expect(blogsAfter.length).toBe(result.body.length - 1)
+  })
+
+  test('a blog updated succesfully', async () => {
+    const result = await api.get('/api/blogs')
+    const firstBlog = result.body[0]
+    firstBlog.title = "Title changed"
+
+    await api.
+      put('/api/blogs/' + firstBlog._id)
+      .send(firstBlog)
+      .expect(201)
+
+  })
 })
+
 
 afterAll(() => {
   server.close()
