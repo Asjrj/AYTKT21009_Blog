@@ -1,4 +1,5 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const listHelper = require('../utils/list_helper')
 const testHelper = require('../utils/test_helper')
 const supertest = require('supertest')
@@ -10,6 +11,7 @@ beforeAll(async () => {
   const blogList = listHelper.dummyBlogs.map(b => new Blog(b))
   const promiseArray = blogList.map(b => b.save())
   await Promise.all(promiseArray)
+  await User.remove({})
 })
 
 describe('API tests', () => {
@@ -112,7 +114,6 @@ describe('API POST', () => {
   })
 })
 
-
 describe('API DELETE AND PUT', () => {
   test('a blog deleted succesfully', async () => {
     const result = await api.get('/api/blogs')
@@ -137,8 +138,60 @@ describe('API DELETE AND PUT', () => {
   })
 })
 
+describe.only('USER API', () => {
+  test('a user is created succesfully', async () => {
+    const usersBefore = await testHelper.usersInDb()
+    const newUser = {
+      username: "koeKayttaja",
+      password: "salasana1",
+      name: "Kalle Käyttäjä"
+    }
+    const response = await api
+      .post('/api/users')
+      .send(newUser)
+    const usersAfter = await testHelper.usersInDb()
 
-afterAll(() => {
-  server.close()
+    expect(response.body.username).toEqual(newUser.username)
+    expect(response.body.adult).toBeTruthy()
+    expect(usersAfter.length).toBe(usersBefore.length + 1)
+  })
+
+  test('an existing username is not accepted', async () => {
+    const usersBefore = await testHelper.usersInDb()
+    const newUser = {
+      username: "koeKayttaja",
+      password: "salasana1",
+      name: "Kalle Käyttäjä"
+    }
+    const response = await api
+      .post('/api/users')
+      .send(newUser)
+    const usersAfter = await testHelper.usersInDb()
+
+    expect(response.status).toBe(400)
+    expect(response.body.error).toEqual('Username already exists')
+    expect(usersAfter.length).toBe(usersBefore.length)
+  })
+
+  test('a password less than 3 characters long is not accepted', async () => {
+    const usersBefore = await testHelper.usersInDb()
+    const newUser = {
+      username: "ToinenKayttaja",
+      password: "sa",
+      name: "Toinen Käyttäjä"
+    }
+    const response = await api
+      .post('/api/users')
+      .send(newUser)
+    const usersAfter = await testHelper.usersInDb()
+
+    expect(response.status).toBe(400)
+    expect(response.body.error).toEqual('Password must be at least 3 characters long')
+    expect(usersAfter.length).toBe(usersBefore.length)
+  })
 })
 
+
+afterAll(async () => {
+  await server.close()
+})
