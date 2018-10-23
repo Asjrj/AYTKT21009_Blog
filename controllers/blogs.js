@@ -1,10 +1,11 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
   try {
-    const blogs = await Blog.find({})
-    response.json(blogs)
+    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, adult: 1 })
+    response.json(blogs.map(Blog.format))
   } catch (exception) {
     console.log(exception)
     response.status(500).json({ error: 'Unexpected error' })
@@ -23,8 +24,13 @@ blogsRouter.post('/', async (request, response) => {
       data.likes = 0
     }
 
+    const user = await User.findOne()
+    data.user = user._id
     const blog = new Blog(data)
     const savedBlog = await blog.save()
+    if (user.blogs === undefined) { user.blogs = [] }
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
     response.status(201).json(savedBlog)
 
   } catch (exception) {

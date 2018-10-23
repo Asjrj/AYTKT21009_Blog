@@ -12,6 +12,14 @@ beforeAll(async () => {
   const promiseArray = blogList.map(b => b.save())
   await Promise.all(promiseArray)
   await User.remove({})
+  const newUser = {
+    username: 'superuser',
+    password: 'salainen',
+    name: 'Pekka Pääkäyttäjä'
+  }
+  await api
+    .post('/api/users')
+    .send(newUser)
 })
 
 describe('API tests', () => {
@@ -31,8 +39,8 @@ describe('API tests', () => {
 
 describe('API Favourite blog', () => {
   let favourite = {
-    title: "Canonical string reduction",
-    author: "Edsger W. Dijkstra",
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
     likes: 12
   }
   test('is found', async () => {
@@ -44,7 +52,7 @@ describe('API Favourite blog', () => {
 
 describe('API Most blogs', () => {
   let expectedResult = {
-    author: "Robert C. Martin",
+    author: 'Robert C. Martin',
     blogs: 3
   }
   test('is found', async () => {
@@ -56,7 +64,7 @@ describe('API Most blogs', () => {
 
 describe('API Most likes', () => {
   let expectedResult = {
-    author: "Edsger W. Dijkstra",
+    author: 'Edsger W. Dijkstra',
     likes: 17
   }
   test('is found', async () => {
@@ -70,9 +78,9 @@ describe('API POST', () => {
   test('a new blog added succesfully', async () => {
     const blogsBefore = await testHelper.blogsInDb()
     const newBlog = {
-      title: "2ality – JavaScript and more",
-      author: "Dr. Axel Rauschmayer",
-      url: "http://2ality.com/",
+      title: '2ality – JavaScript and more',
+      author: 'Dr. Axel Rauschmayer',
+      url: 'http://2ality.com/',
       likes: 2
     }
     const response = await api
@@ -86,8 +94,8 @@ describe('API POST', () => {
   test('blog with insufficient data is not added', async () => {
     const blogsBefore = await testHelper.blogsInDb()
     const badBlog = {
-      author: "Dr. Axel Rauschmayer",
-      url: "http://2ality.com/"
+      author: 'Dr. Axel Rauschmayer',
+      url: 'http://2ality.com/'
     }
     await api
       .post('/api/blogs')
@@ -100,9 +108,9 @@ describe('API POST', () => {
   test('blog with no likes is initialized with likes = zero', async () => {
     const blogsBefore = await testHelper.blogsInDb()
     const zeroLikesBlog = {
-      title: "David Walsh Blog",
-      author: "David Walsh",
-      url: "https://davidwalsh.name/"
+      title: 'David Walsh Blog',
+      author: 'David Walsh',
+      url: 'https://davidwalsh.name/'
     }
     const response = await api
       .post('/api/blogs')
@@ -117,7 +125,7 @@ describe('API POST', () => {
 describe('API DELETE AND PUT', () => {
   test('a blog deleted succesfully', async () => {
     const result = await api.get('/api/blogs')
-    const id = result.body[0]._id
+    const id = result.body[0].id
     await api.
       delete('/api/blogs/' + id)
       .expect(204)
@@ -128,23 +136,22 @@ describe('API DELETE AND PUT', () => {
   test('a blog updated succesfully', async () => {
     const result = await api.get('/api/blogs')
     const firstBlog = result.body[0]
-    firstBlog.title = "Title changed"
+    firstBlog.title = 'Title changed'
 
     await api.
-      put('/api/blogs/' + firstBlog._id)
+      put('/api/blogs/' + firstBlog.id)
       .send(firstBlog)
       .expect(201)
-
   })
 })
 
-describe.only('USER API', () => {
+describe('USER API', () => {
   test('a user is created succesfully', async () => {
     const usersBefore = await testHelper.usersInDb()
     const newUser = {
-      username: "koeKayttaja",
-      password: "salasana1",
-      name: "Kalle Käyttäjä"
+      username: 'koeKayttaja',
+      password: 'salasana1',
+      name: 'Kalle Käyttäjä'
     }
     const response = await api
       .post('/api/users')
@@ -159,9 +166,9 @@ describe.only('USER API', () => {
   test('an existing username is not accepted', async () => {
     const usersBefore = await testHelper.usersInDb()
     const newUser = {
-      username: "koeKayttaja",
-      password: "salasana1",
-      name: "Kalle Käyttäjä"
+      username: 'koeKayttaja',
+      password: 'salasana1',
+      name: 'Kalle Käyttäjä'
     }
     const response = await api
       .post('/api/users')
@@ -176,9 +183,9 @@ describe.only('USER API', () => {
   test('a password less than 3 characters long is not accepted', async () => {
     const usersBefore = await testHelper.usersInDb()
     const newUser = {
-      username: "ToinenKayttaja",
-      password: "sa",
-      name: "Toinen Käyttäjä"
+      username: 'ToinenKayttaja',
+      password: 'sa',
+      name: 'Toinen Käyttäjä'
     }
     const response = await api
       .post('/api/users')
