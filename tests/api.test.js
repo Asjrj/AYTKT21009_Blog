@@ -86,6 +86,7 @@ describe('API POST', () => {
     const response = await api
       .post('/api/blogs')
       .send(newBlog)
+      .expect(201)
     const blogsAfter = await testHelper.blogsInDb()
     expect(response.body.title).toEqual(newBlog.title)
     expect(blogsAfter.length).toBe(blogsBefore.length + 1)
@@ -114,7 +115,6 @@ describe('API POST', () => {
     }
     const response = await api
       .post('/api/blogs')
-      .send(zeroLikesBlog)
       .expect(201)
     const blogsAfter = await testHelper.blogsInDb()
     expect(blogsAfter.length).toBe(blogsBefore.length + 1)
