@@ -142,15 +142,24 @@ describe('API POST', () => {
   })
 })
 
-describe('API DELETE AND PUT', () => {
+describe('API DELETE and PUT', () => {
   test('a blog deleted succesfully', async () => {
-    const result = await api.get('/api/blogs')
-    const id = result.body[0].id
-    await api.
-      delete('/api/blogs/' + id)
+    const newUser = {
+      username: 'superuser',
+      password: 'salainen',
+      name: 'Pekka Pääkäyttäjä'
+    }
+    const userLogin = await api
+      .post('/api/login')
+      .send(newUser)
+    const blog = await Blog.findOne({ title: '2ality – JavaScript and more' })
+    const blogsBefore = await testHelper.blogsInDb()
+    await api
+      .delete('/api/blogs/' + blog._id)
+      .set('Authorization', 'bearer ' + userLogin.body.token)
       .expect(204)
     const blogsAfter = await testHelper.blogsInDb()
-    expect(blogsAfter.length).toBe(result.body.length - 1)
+    expect(blogsAfter.length).toBe(blogsBefore.length - 1)
   })
 
   test('a blog updated succesfully', async () => {
@@ -214,6 +223,27 @@ describe('USER API', () => {
     expect(response.status).toBe(400)
     expect(response.body.error).toEqual('Password must be at least 3 characters long')
     expect(usersAfter.length).toBe(usersBefore.length)
+  })
+})
+
+describe('Blog not deleted', () => {
+  test('by wrong user', async () => {
+    const newUser = {
+      username: 'koeKayttaja',
+      password: 'salasana1',
+      name: 'Kalle Käyttäjä'
+    }
+    const userLogin = await api
+      .post('/api/login')
+      .send(newUser)
+    const blog = await Blog.findOne({ title: 'David Walsh Blog' })
+    const blogsBefore = await testHelper.blogsInDb()
+    await api
+      .delete('/api/blogs/' + blog._id)
+      .set('Authorization', 'bearer ' + userLogin.body.token)
+      .expect(400)
+    const blogsAfter = await testHelper.blogsInDb()
+    expect(blogsAfter.length).toBe(blogsBefore.length)
   })
 })
 
