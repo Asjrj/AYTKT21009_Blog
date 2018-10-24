@@ -76,6 +76,15 @@ describe('API Most likes', () => {
 
 describe('API POST', () => {
   test('a new blog added succesfully', async () => {
+    const newUser = {
+      username: 'superuser',
+      password: 'salainen',
+      name: 'Pekka Pääkäyttäjä'
+    }
+    const userLogin = await api
+      .post('/api/login')
+      .send(newUser)
+
     const blogsBefore = await testHelper.blogsInDb()
     const newBlog = {
       title: '2ality – JavaScript and more',
@@ -85,6 +94,7 @@ describe('API POST', () => {
     }
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', 'bearer ' + userLogin.body.token)
       .send(newBlog)
       .expect(201)
     const blogsAfter = await testHelper.blogsInDb()
@@ -107,6 +117,14 @@ describe('API POST', () => {
   })
 
   test('blog with no likes is initialized with likes = zero', async () => {
+    const newUser = {
+      username: 'superuser',
+      password: 'salainen',
+      name: 'Pekka Pääkäyttäjä'
+    }
+    const userLogin = await api
+      .post('/api/login')
+      .send(newUser)
     const blogsBefore = await testHelper.blogsInDb()
     const zeroLikesBlog = {
       title: 'David Walsh Blog',
@@ -115,6 +133,8 @@ describe('API POST', () => {
     }
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', 'bearer ' + userLogin.body.token)
+      .send(zeroLikesBlog)
       .expect(201)
     const blogsAfter = await testHelper.blogsInDb()
     expect(blogsAfter.length).toBe(blogsBefore.length + 1)
@@ -137,7 +157,6 @@ describe('API DELETE AND PUT', () => {
     const result = await api.get('/api/blogs')
     const firstBlog = result.body[0]
     firstBlog.title = 'Title changed'
-
     await api.
       put('/api/blogs/' + firstBlog.id)
       .send(firstBlog)
