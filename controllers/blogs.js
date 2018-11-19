@@ -96,4 +96,21 @@ blogsRouter.put('/:id', async (request, response) => {
   }
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+  try {
+    const data = request.body
+    if (data === undefined || data.comment === undefined) {
+      return response.status(400).send({ error: 'Comment is missing' })
+    }
+    const blog = await Blog.findById(request.params.id)
+    if (blog.comments === undefined) { blog.comments = [] }
+    blog.comments = blog.comments.concat(data.comment)
+    await blog.save()
+    response.status(201).json(blog)
+  } catch (exception) {
+    console.log(exception)
+    response.status(500).json({ error: 'Unexpected error' })
+  }
+})
+
 module.exports = blogsRouter
