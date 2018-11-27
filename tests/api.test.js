@@ -247,6 +247,23 @@ describe('Blog not deleted', () => {
   })
 })
 
+describe('Comments:', () => {
+  test('an empty array is returned, when a blog has no comments', async () => {
+    const blog = await Blog.findOne({ title: 'Type wars' })
+    expect(blog.comments).toHaveLength(0)
+  })
+  test('a new comment added succesfully', async () => {
+    const blogBefore = await Blog.findOne({ title: 'First class tests' })
+    const result = await api
+      .post('/api/blogs/' + blogBefore._id + '/comments')
+      .send({ comment: 'This is a test comment' })
+    const blogAfter = await Blog.findById(blogBefore._id)
+    expect(result.status).toBe(201)
+    expect(blogAfter.comments).toHaveLength(1)
+    expect(blogAfter.comments).toContain('This is a test comment')
+  })
+})
+
 
 afterAll(async () => {
   await server.close()

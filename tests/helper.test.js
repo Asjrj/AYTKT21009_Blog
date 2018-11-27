@@ -1,6 +1,6 @@
 const listHelper = require('../utils/list_helper')
 
-describe('DUMMY', () => {
+describe.only('DUMMY', () => {
 
   test('dummy is called', () => {
     const blogs = []
@@ -24,8 +24,8 @@ describe('Total likes', () => {
 
 describe('Favourite blog', () => {
   let favourite = {
-    title: "Canonical string reduction",
-    author: "Edsger W. Dijkstra",
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
     likes: 12
   }
   test('is found', () => {
@@ -36,7 +36,7 @@ describe('Favourite blog', () => {
 
 describe('Most blogs', () => {
   let expectedResult = {
-    author: "Robert C. Martin",
+    author: 'Robert C. Martin',
     blogs: 3
   }
   test('is found', () => {
@@ -47,7 +47,7 @@ describe('Most blogs', () => {
 
 describe('Most likes', () => {
   let expectedResult = {
-    author: "Edsger W. Dijkstra",
+    author: 'Edsger W. Dijkstra',
     likes: 17
   }
   test('is found', () => {
