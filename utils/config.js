@@ -1,4 +1,4 @@
-let port = process.env.BLOG_PORT || 5000
+let port = process.env.PORT || 5000
 let mongoUrl = process.env.BLOG_DB_URL
 
 if (process.env.NODE_ENV !== 'production') {
